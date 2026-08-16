@@ -15,9 +15,10 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Database
+        // Database - supports Railway DATABASE_URL or standard ConnectionString
+        var connectionString = GetPostgreSqlConnectionString(configuration);
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(connectionString));
 
         // Repositories
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -121,5 +122,34 @@ public static class ServiceExtensions
         });
 
         return services;
+    }
+
+    private static string GetPostgreSqlConnectionString(IConfiguration configuration)
+    {
+        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
+                          ?? Environment.GetEnvironmentVariable("DATABASE_PUBLIC_URL");
+
+        if (!string.IsNullOrEmpty(databaseUrl))
+        {
+            try
+            {
+                var uri = new Uri(databaseUrl);
+                var userInfo = uri.UserInfo.Split(':');
+                var username = userInfo[0];
+                var password = userInfo.Length > 1 ? userInfo[1] : "";
+                var host = uri.Host;
+                var port = uri.Port > 0 ? uri.Port : 5432;
+                var database = uri.AbsolutePath.TrimStart('/');
+
+                return $"Host={host};Port={port};Database={database};Username={username};Password={password};";
+            }
+            catch
+            {
+                return databaseUrl;
+            }
+        }
+
+        return configuration.GetConnectionString("DefaultConnection") 
+               ?? "Host=localhost;Port=5432;Database=EmployeeManagement;Username=postgres;Password=postgres;";
     }
 }
