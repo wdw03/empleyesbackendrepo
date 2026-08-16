@@ -1,0 +1,18 @@
+[Unit]
+Description=Employee Management .NET 8 Web API
+After=network.target postgresql.service
+
+[Service]
+WorkingDirectory=/var/www/employee-api-publish
+ExecStart=/usr/bin/dotnet /var/www/employee-api-publish/EmployeeAPI.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=employee-api
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=ASPNETCORE_URLS=http://localhost:5000
+
+[Install]
+WantedBy=multi-user.target
