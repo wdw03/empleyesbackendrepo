@@ -56,11 +56,20 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Root health check endpoint
+// Root and /api health check endpoints
 app.MapGet("/", () => Results.Ok(new
 {
     status = "Healthy",
     message = "Employee Management System API is running successfully!",
+    swagger = "/swagger",
+    timestamp = DateTime.UtcNow
+}));
+
+app.MapGet("/api", () => Results.Ok(new
+{
+    status = "Healthy",
+    message = "Employee Management API Base Endpoint",
+    endpoints = new[] { "/api/auth/login", "/api/dashboard/stats", "/api/employees", "/api/departments", "/api/roles" },
     swagger = "/swagger",
     timestamp = DateTime.UtcNow
 }));
