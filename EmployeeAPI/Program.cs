@@ -3,6 +3,9 @@ using EmployeeAPI.Extensions;
 using EmployeeAPI.Middleware;
 using System.Text.Json.Serialization;
 
+// Enable legacy timestamp behavior for Npgsql to handle DateTime seamlessly
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
