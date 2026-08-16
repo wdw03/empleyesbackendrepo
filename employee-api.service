@@ -12,7 +12,7 @@ SyslogIdentifier=employee-api
 User=www-data
 Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
-Environment=ASPNETCORE_URLS=http://localhost:5000
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5050
 
 [Install]
 WantedBy=multi-user.target
